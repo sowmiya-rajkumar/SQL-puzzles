@@ -35,11 +35,11 @@ WHERE id NOT IN (SELECT id
 ```
 
 ### Query Explanation:
-CTE: 
-      - ASCII() - calculates the ASCII value of the first character of the `email_id` (A-Z -> 65-90), (a-z -> 97-122).<br />
-      - DENSE_RANK() OVER(PARTITION BY LOWER(email_id) ORDER BY ASCII(email_id) DESC) - partitions the data by lowercase version of 'email_id` and within each partition rows are 
+CTE: <br />
+      1. - ASCII() - calculates the ASCII value of the first character of the `email_id` (A-Z -> 65-90), (a-z -> 97-122).<br />
+      2. - DENSE_RANK() OVER(PARTITION BY LOWER(email_id) ORDER BY ASCII(email_id) DESC) - partitions the data by lowercase version of 'email_id` and within each partition rows are 
        ordered by the ASCII value of 'email_id` in descending order.<br />
-Main query: 
+Main query: <br />
     Subquery: Filters the rows where ranks are greater than 1 (this ensures that non-duplicate uppercase email_id's are not removed. Eg: id==105 where email_id is uppercase but is 
             not duplicated) and ascii_value < 96 (A-Z -> 65-90).<br />
       - Selects all rows from students table where the `id` is not in the set of `id`'s from the subquery.
