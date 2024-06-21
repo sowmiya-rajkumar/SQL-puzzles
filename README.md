@@ -1,8 +1,8 @@
 # SQL-puzzles
 
-## Q1: Given a list of employee email addresses, how can we identify the employee IDs associated with the following conditions: 
-##      - for duplicates: If multiple email addresses exist that are identical, retain only the lowercase version and return the corresponding employee IDs. 
-##      - uppercase addresses: If an email address exists only once and is completely uppercase, retain it and return the corresponding employee ID.
+**Q1: Given a list of employee email addresses, how can we identify the employee IDs associated with the following conditions:
+     - for duplicates: If multiple email addresses exist that are identical, retain only the lowercase version and return the corresponding employee IDs. 
+     - uppercase addresses: If an email address exists only once and is completely uppercase, retain it and return the corresponding employee ID.**
 
 ### Dataset:
 ```
@@ -40,8 +40,10 @@ CTE: <br />
 - DENSE_RANK() OVER(PARTITION BY LOWER(email_id) ORDER BY ASCII(email_id) DESC) - partitions the data by lowercase version of 'email_id` and within each partition rows are 
        ordered by the ASCII value of 'email_id` in descending order.<br />
 
-Subquery: Filters the rows where ranks are greater than 1 (this ensures that non-duplicate uppercase email_id's are not removed. Eg: id==105 where email_id is uppercase but is 
+Subquery: 
+- Filters the rows where ranks are greater than 1 (this ensures that non-duplicate uppercase email_id's are not removed. Eg: id==105 where email_id is uppercase but is 
             not duplicated) and ascii_value < 96 (A-Z -> 65-90).<br />
 	    
-Main query: Selects all rows from students table where the `id` is not in the set of `id`'s from the subquery.
+Main query: 
+- Selects all rows from students table where the `id` is not in the set of `id`'s from the subquery.
     
