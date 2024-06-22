@@ -50,3 +50,8 @@ Main query:
 ### Result:
 
 <img width="431" alt="Q1-ans" src="https://github.com/sowmiya-rajkumar/SQL-puzzles/assets/98767488/f0aec525-8d09-45e2-a5f9-0f5f172a5758">
+
+
+<br />
+<br />
+******
