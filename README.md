@@ -45,10 +45,83 @@ Subquery:
 	    
 Main query: 
 - Selects all rows from students table where the `id` is not in the set of `id`'s from the subquery.
-    
+
+
 ### Result:
 
 <img width="431" alt="Q1-ans" src="https://github.com/sowmiya-rajkumar/SQL-puzzles/assets/98767488/f0aec525-8d09-45e2-a5f9-0f5f172a5758">
 
 
 _____________
+
+
+**Q2: Given a dataset with distances between source and destination locations, return the records that have unique distances. For distances that have duplicates, return only the first occurrence based on the order they appear in the dataset (i.e., the natural input order), not based on alphabetical or numerical ordering.**
+
+### Dataset:
+
+```
+CREATE TABLE city_distance(
+		distance		INTEGER,
+		source			VARCHAR(20),
+		destination		VARCHAR(20));
+		
+INSERT INTO city_distance(distance, source, destination)
+VALUES (100, 'New Delhi', 'Panipat'),
+		(200, 'Ambala', 'New Delhi'),
+		(150, 'Bangalore', 'Mysore'),
+		(150, 'Mysore', 'Bangalore'),
+		(250, 'Mumbai', 'Pune'),
+		(250, 'Pune', 'Mumbai'),
+		(2500, 'Chennai', 'Bhopal'),
+		(2500, 'Bhopal', 'Chennai'),
+		(60, 'Tirupati', 'Tirumala'),
+		(80, 'Tirumala', 'Tirupati');
+```
+
+### Answer:
+
+#### Step 1:
+Create a column with ROW_NUMBER() window function based on the natural input order.
+
+```
+
+SELECT *, ROW_NUMBER() OVER() as row_num  
+FROM city_distance
+
+or
+
+SELECT *, ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) as row_num
+FROM city_distance;
+
+```
+
+#### Step 2:
+Create another cte and rank it by partitioning with distance and ordering by row_num so that we can maintain the natural input order.
+
+```
+
+WITH row_numbers AS(SELECT *, ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) as row_num
+                    FROM city_distance),
+SELECT *, RANK() OVER(PARTITION BY distance ORDER BY row_num ASC) ranks
+FROM row_numbers
+ORDER BY distance;
+
+```
+
+#### Step 3: 
+Finally filter the records with ranks 1.
+
+```
+WITH row_numbers AS(SELECT *, ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) as row_num
+                    FROM city_distance),
+     dense_ranking AS (SELECT *, RANK() OVER(PARTITION BY distance ORDER BY row_num ASC) ranks
+			FROM row_numbers
+			ORDER BY distance)
+SELECT *
+FROM dense_ranking
+WHERE ranks = 1;
+
+```
+### Result:
+
+![Q2-ans](https://github.com/sowmiya-rajkumar/SQL-puzzles/assets/98767488/10ba4691-ef6f-4bcc-9921-23e645c5671f)
