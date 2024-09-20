@@ -25,13 +25,13 @@ VALUES (101, 'Alice Dalton', 'al.dal@abc.com'),
 ### Answer:
 ```
 WITH ranking AS (SELECT *, ASCII(email_id) ascii_value, 
-				 	                    DENSE_RANK() OVER(PARTITION BY LOWER(email_id) ORDER BY ASCII(email_id) DESC) AS ranks
-				          FROM students)
+				DENSE_RANK() OVER(PARTITION BY LOWER(email_id) ORDER BY ASCII(email_id) DESC) AS ranks
+		FROM students)
 SELECT *
 FROM students 
 WHERE id NOT IN (SELECT id
-				FROM ranking
-				WHERE ranks > 1 AND ascii_value < 96)
+		FROM ranking
+		WHERE ranks > 1 AND ascii_value < 96)
 ```
 
 ### Query Explanation:
